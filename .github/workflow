@@ -3,30 +3,31 @@ name: Build Android APK
 on:
   push:
     branches:
-      - main # או master, לפי שם הענף הראשי שלך
-  workflow_dispatch: # מאפשר לך להפעיל את הבנייה גם ידנית
+      - main # שנה ל-master אם זה שם הענף הראשי שלך
+  workflow_dispatch: # מאפשר הפעלה ידנית בלחיצת כפתור
 
 jobs:
   build:
-    runs-level: ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: 'gradle' # מאיץ את הבנייה בפעמים הבאות
 
-    - name: Make Gradle Executable
+    - name: Grant Execute Permission for Gradlew
       run: chmod +x gradlew
 
-    - name: Build Build APK
-      run: ./gradlew assembleDebug # בונה APK של גרסת בדיקה (Debug)
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
 
-    - name: Upload APK
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-debug-apk
